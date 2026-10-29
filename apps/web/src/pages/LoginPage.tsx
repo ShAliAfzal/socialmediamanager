@@ -1,11 +1,12 @@
 import { FormEvent, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import AppLogo from '../components/AppLogo';
 import { useAuth } from '../auth';
 
 export default function LoginPage() {
   const { user, login } = useAuth();
-  const [email, setEmail] = useState('client@ecomrisers.com');
-  const [password, setPassword] = useState('Ecom@12345');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -26,44 +27,44 @@ export default function LoginPage() {
 
   return (
     <div className="login-wrap">
-      <div className="card login-card stack">
-        <div>
-          <p className="badge ok">Pro social agent</p>
-          <h2>Post less. Publish better.</h2>
-          <p className="muted">
-            Topic → keywords → blog → Reels brief → Facebook/Instagram → git or
-            webhook.
-          </p>
-        </div>
-        <form className="stack" onSubmit={onSubmit}>
-          <label>
-            Email
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="username"
-            />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-            />
-          </label>
-          {error ? <p className="error">{error}</p> : null}
-          <button className="btn btn-primary" disabled={busy} type="submit">
-            {busy ? 'Signing in…' : 'Sign in'}
-          </button>
-        </form>
-        <div className="stat muted" style={{ fontSize: '0.85rem' }}>
-          Demo accounts are pre-seeded. Admin:{' '}
-          <strong style={{ color: 'var(--text)' }}>
-            admin@socialmediamanager.app
-          </strong>{' '}
-          / Admin@12345
+      <div className="login-stage">
+        <header className="login-brand">
+          <AppLogo size="hero" stacked align="center" />
+        </header>
+
+        <div className="card login-card stack">
+          <div>
+            <h2>Back to the desk</h2>
+            <p className="lede">
+              Plan posts, polish drafts, and share them live when the timing is
+              right.
+            </p>
+          </div>
+          <form className="stack" onSubmit={onSubmit}>
+            <label>
+              Email
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="username"
+                required
+              />
+            </label>
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+            </label>
+            {error ? <p className="error">{error}</p> : null}
+            <button className="btn btn-primary" disabled={busy} type="submit">
+              {busy ? 'Signing in…' : 'Sign in'}
+            </button>
+          </form>
         </div>
       </div>
     </div>

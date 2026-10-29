@@ -1,6 +1,6 @@
 # Social Media Manager
 
-Multi-client content agent for Facebook Pages, Instagram, blogs (git/webhook), HeyGen video, and DataForSEO keywords.
+Multi-client content agent for Facebook Pages, Instagram, blogs (git/webhook), HeyGen or Google Flow video, and DataForSEO keywords.
 
 ## Stack
 
@@ -34,7 +34,9 @@ Run Node as a Windows service or IIS HttpPlatformHandler pointing at `apps/api` 
 
 ## Flow
 
-1. Admin sets HeyGen + DataForSEO keys (Settings).
-2. Client connects FB Page ID + long-lived Page token (+ IG user id).
-3. Create a campaign with a topic → generate keywords/blog/captions/video brief.
-4. Approve (or enable auto-publish) → post to Meta + publish blog via git and/or webhook.
+1. Admin sets **Cursor API key** + schedule hours (default 9 & 21) in Settings.
+2. Client connects Facebook Page + Instagram.
+3. **Schedule a post** (topic + go-live time). Content is prepared ~2 days early (full pack per client campaign in one go). Review, swap image/video links, then **Approve for schedule** or **Post now**.
+4. Twice-daily batch creates due drafts and posts approved items whose time has arrived. Manual **Run schedule check now** is on Home.
+
+Get a Cursor key at [cursor.com/dashboard/integrations](https://cursor.com/dashboard/integrations).

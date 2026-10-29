@@ -12,6 +12,22 @@ export class Settings {
   heygenApiKeyEncrypted!: string;
 
   @Prop({ default: '' })
+  googleFlowApiKeyEncrypted!: string;
+
+  @Prop({ default: 'gemini-omni-1.1-flash' })
+  googleFlowModel!: string;
+
+  /** heygen | google_flow | auto */
+  @Prop({ default: 'auto' })
+  videoProvider!: string;
+
+  @Prop({ default: '' })
+  cursorApiKeyEncrypted!: string;
+
+  @Prop({ default: 'composer-2.5' })
+  cursorModel!: string;
+
+  @Prop({ default: '' })
   dataforseoLoginEncrypted!: string;
 
   @Prop({ default: '' })
@@ -19,6 +35,13 @@ export class Settings {
 
   @Prop({ default: true })
   dryRunPublish!: boolean;
+
+  /** Hours (0–23, server local) for the twice-daily job */
+  @Prop({ type: [Number], default: [9, 21] })
+  scheduleHours!: number[];
+
+  @Prop({ default: 2 })
+  generateLeadDays!: number;
 }
 
 export const SettingsSchema = SchemaFactory.createForClass(Settings);

@@ -1,8 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ClientDocument } from '../clients/client.schema';
+import {
+  CursorContentService,
+  GeneratedPack,
+} from '../integrations/cursor-content.service';
 
 @Injectable()
 export class ContentGeneratorService {
+  private readonly log = new Logger(ContentGeneratorService.name);
+
+  constructor(private cursorContent: CursorContentService) {}
+
   slugify(input: string) {
     return input
       .toLowerCase()
@@ -11,11 +19,25 @@ export class ContentGeneratorService {
       .slice(0, 80);
   }
 
-  generate(input: {
+  async generate(input: {
     topic: string;
     keywords: string[];
     client: ClientDocument;
-  }) {
+  }): Promise<GeneratedPack> {
+    const fromCursor = await this.cursorContent.generateWithCursor(input);
+    if (fromCursor) {
+      this.log.log('Content pack generated via Cursor SDK');
+      return fromCursor;
+    }
+    this.log.warn('Falling back to template content pack');
+    return this.templatePack(input);
+  }
+
+  private templatePack(input: {
+    topic: string;
+    keywords: string[];
+    client: ClientDocument;
+  }): GeneratedPack {
     const focus =
       input.keywords[0] ||
       'amazon product ranking but no sales';
@@ -82,6 +104,7 @@ Structure: hook (0-5s), 3 punchy insights, CTA.
 No hype. Operator voice. On-screen text: RANK ≠ SALES.`;
 
     return {
+      source: 'template',
       blog: {
         title,
         slug,

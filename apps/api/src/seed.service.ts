@@ -74,12 +74,25 @@ export class SeedService implements OnModuleInit {
       });
     }
 
-    await this.clients.connectMeta(client.id, {
-      pageId: 'DEMO_PAGE_ID',
-      pageName: 'Ecom Risers Demo Page',
-      pageToken: 'demo',
-      igUserId: 'DEMO_IG_USER',
-    });
+    // Demo Meta placeholders only if nothing is stored yet — never treat as live.
+    const pageToken = client.meta?.pageTokenEncrypted
+      ? 'set'
+      : '';
+    if (!pageToken) {
+      const { encryptSecret } = await import('./common/crypto.util');
+      client.meta = {
+        pageId: 'DEMO_PAGE_ID',
+        pageName: 'Ecom Risers Demo Page',
+        pageTokenEncrypted: encryptSecret('demo'),
+        igUserId: 'DEMO_IG_USER',
+        connectedAt: new Date(),
+        lastVerifyStatus: 'demo',
+        lastVerifyMessage:
+          'Demo credentials only — not linked to a real Facebook Page.',
+        lastVerifiedAt: new Date(),
+      };
+      await client.save();
+    }
 
     const adminUser = {
       sub: 'seed',

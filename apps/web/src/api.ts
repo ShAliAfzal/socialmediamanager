@@ -1,4 +1,12 @@
 const API = import.meta.env.VITE_API_URL || 'http://localhost:4100/api';
+const API_ORIGIN = API.replace(/\/api\/?$/, '');
+
+export function uploadsUrl(path: string) {
+  if (!path) return '';
+  if (/^https?:\/\//i.test(path)) return path;
+  if (path.startsWith('/uploads')) return `${API_ORIGIN}${path}`;
+  return `${API_ORIGIN}/uploads/${path.replace(/^\//, '')}`;
+}
 
 export async function api<T>(
   path: string,

@@ -3,8 +3,11 @@ import { useAuth } from './auth';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import SettingsPage from './pages/SettingsPage';
+import ClientsPage from './pages/ClientsPage';
 import ClientWorkspacePage from './pages/ClientWorkspacePage';
 import CampaignPage from './pages/CampaignPage';
+import AgentPage from './pages/AgentPage';
+import ClientSchedulePage from './pages/ClientSchedulePage';
 
 function Private({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -30,6 +33,30 @@ export default function App() {
         element={
           <Private>
             <SettingsPage />
+          </Private>
+        }
+      />
+      <Route
+        path="/agent"
+        element={
+          <Private>
+            <AgentPage />
+          </Private>
+        }
+      />
+      <Route
+        path="/clients"
+        element={
+          <Private>
+            <ClientsPage />
+          </Private>
+        }
+      />
+      <Route
+        path="/clients/:id/schedule"
+        element={
+          <Private>
+            <ClientSchedulePage />
           </Private>
         }
       />

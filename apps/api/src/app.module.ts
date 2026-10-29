@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { ClientsModule } from './clients/clients.module';
 import { SettingsModule } from './settings/settings.module';
 import { CampaignsModule } from './campaigns/campaigns.module';
+import { AgentModule } from './agent/agent.module';
 import { SeedModule } from './seed.module';
 import { HealthController } from './health.controller';
 import { resolveMongoUri } from './mongo';
@@ -38,6 +39,7 @@ import { resolveMongoUri } from './mongo';
     ClientsModule,
     SettingsModule,
     CampaignsModule,
+    AgentModule,
     SeedModule,
   ],
   controllers: [HealthController],

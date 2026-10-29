@@ -10,8 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  IsArray,
   IsBoolean,
+  IsEmail,
   IsIn,
+  IsNumber,
   IsOptional,
   IsString,
   MinLength,
@@ -37,6 +40,47 @@ class WebhookDto {
   @IsOptional() @IsString() secret?: string;
 }
 
+class CreateClientDto {
+  @IsString()
+  @MinLength(2)
+  name!: string;
+
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
+  @IsOptional()
+  @IsString()
+  websiteUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  niche?: string;
+
+  @IsOptional()
+  @IsString()
+  brandVoice?: string;
+
+  @IsOptional()
+  @IsIn(['git', 'webhook', 'both', 'none'])
+  blogPublishMode?: 'git' | 'webhook' | 'both' | 'none';
+
+  @IsOptional()
+  @IsBoolean()
+  autoPublish?: boolean;
+
+  @IsEmail()
+  loginEmail!: string;
+
+  @IsString()
+  @MinLength(6)
+  loginPassword!: string;
+
+  @IsOptional()
+  @IsString()
+  loginName?: string;
+}
+
 class UpdateClientDto {
   @IsOptional() @IsString() name?: string;
   @IsOptional() @IsString() websiteUrl?: string;
@@ -46,6 +90,11 @@ class UpdateClientDto {
   blogPublishMode?: 'git' | 'webhook' | 'both' | 'none';
   @IsOptional() @IsString() niche?: string;
   @IsOptional() @IsString() brandVoice?: string;
+  @IsOptional() @IsNumber() generateLeadDays?: number;
+  @IsOptional() @IsNumber() maxGenerationsPerDay?: number;
+  @IsOptional() @IsArray() @IsString({ each: true }) postTimes?: string[];
+  @IsOptional() @IsString() timezone?: string;
+  @IsOptional() @IsArray() @IsNumber({}, { each: true }) postWeekdays?: number[];
   @IsOptional() @ValidateNested() @Type(() => GitDto) git?: GitDto;
   @IsOptional() @ValidateNested() @Type(() => WebhookDto) webhook?: WebhookDto;
 }
@@ -74,6 +123,12 @@ export class ClientsController {
   async list() {
     const rows = await this.clients.list();
     return rows.map((c) => this.clients.toPublic(c));
+  }
+
+  @Post()
+  @Roles('admin')
+  create(@Body() body: CreateClientDto) {
+    return this.clients.createWorkspace(body);
   }
 
   @Get('me')
@@ -109,5 +164,15 @@ export class ClientsController {
   ) {
     this.assertAccess(req.user, id);
     return this.clients.connectMeta(id, body);
+  }
+
+  @Post(':id/meta/verify')
+  async verifyMeta(
+    @Param('id') id: string,
+    @Req() req: { user: JwtPayload },
+  ) {
+    this.assertAccess(req.user, id);
+    const client = await this.clients.get(id);
+    return this.clients.verifyAndPersistMeta(client);
   }
 }

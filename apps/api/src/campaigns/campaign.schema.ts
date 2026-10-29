@@ -5,7 +5,9 @@ export type CampaignDocument = HydratedDocument<Campaign>;
 
 export type CampaignStatus =
   | 'draft'
+  | 'scheduled'
   | 'generating'
+  | 'ready_for_review'
   | 'pending_approval'
   | 'approved'
   | 'publishing'
@@ -24,7 +26,9 @@ export class Campaign {
     default: 'draft',
     enum: [
       'draft',
+      'scheduled',
       'generating',
+      'ready_for_review',
       'pending_approval',
       'approved',
       'publishing',
@@ -33,6 +37,18 @@ export class Campaign {
     ],
   })
   status!: CampaignStatus;
+
+  /** When the post should go live */
+  @Prop({ type: Date, default: null, index: true })
+  publishAt!: Date | null;
+
+  /** When content should be generated (usually publishAt − 2 days) */
+  @Prop({ type: Date, default: null, index: true })
+  generateAt!: Date | null;
+
+  /** After review, allow the twice-daily cron to publish at publishAt */
+  @Prop({ default: false })
+  approvedForAutoPublish!: boolean;
 
   @Prop({ type: [String], default: [] })
   keywords!: string[];
@@ -75,6 +91,8 @@ export class Campaign {
       script: String,
       videoUrl: String,
       heygenVideoId: String,
+      googleFlowOperationId: String,
+      provider: String,
       status: String,
     },
     default: {},
@@ -84,7 +102,26 @@ export class Campaign {
     script?: string;
     videoUrl?: string;
     heygenVideoId?: string;
+    googleFlowOperationId?: string;
+    provider?: string;
     status?: string;
+  };
+
+  /** Agent or manually pasted creative */
+  @Prop({
+    type: {
+      imageUrl: String,
+      videoUrl: String,
+      imagePrompt: String,
+      altText: String,
+    },
+    default: {},
+  })
+  media!: {
+    imageUrl?: string;
+    videoUrl?: string;
+    imagePrompt?: string;
+    altText?: string;
   };
 
   @Prop({
@@ -111,6 +148,11 @@ export class Campaign {
 
   @Prop({ default: '' })
   notes!: string;
+
+  @Prop({ default: '' })
+  lastError!: string;
 }
 
 export const CampaignSchema = SchemaFactory.createForClass(Campaign);
+CampaignSchema.index({ status: 1, generateAt: 1 });
+CampaignSchema.index({ status: 1, publishAt: 1, approvedForAutoPublish: 1 });

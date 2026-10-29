@@ -8,8 +8,12 @@ import { ClientsModule } from '../clients/clients.module';
 import { SettingsModule } from '../settings/settings.module';
 import { DataForSeoService } from '../integrations/dataforseo.service';
 import { HeyGenService } from '../integrations/heygen.service';
+import { GoogleFlowService } from '../integrations/google-flow.service';
 import { MetaService } from '../integrations/meta.service';
 import { BlogPublishService } from '../integrations/blog-publish.service';
+import { CursorContentService } from '../integrations/cursor-content.service';
+import { CursorAgentService } from '../agent/cursor-agent.service';
+import { CampaignScheduler } from './campaign.scheduler';
 
 @Module({
   imports: [
@@ -21,13 +25,17 @@ import { BlogPublishService } from '../integrations/blog-publish.service';
   ],
   providers: [
     CampaignsService,
+    CampaignScheduler,
     ContentGeneratorService,
+    CursorContentService,
+    CursorAgentService,
     DataForSeoService,
     HeyGenService,
+    GoogleFlowService,
     MetaService,
     BlogPublishService,
   ],
   controllers: [CampaignsController],
-  exports: [CampaignsService],
+  exports: [CampaignsService, CampaignScheduler],
 })
 export class CampaignsModule {}
